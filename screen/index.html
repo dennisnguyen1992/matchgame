@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Adventure Quest</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ── LOBBY ─────────────────────────────────────────────────── -->
+<div id="screen-lobby" class="screen">
+    <div class="lobby-header">
+        <div class="lobby-title">⚔️ Math Adventure Quest ⚔️</div>
+        <div class="lobby-sub">Multiplayer Educational Adventure · 2–4 Players</div>
+    </div>
+
+    <div id="player-list"></div>
+
+    <p id="lobby-msg">Scan the QR Code with your phone to join the adventure!</p>
+
+    <button id="btn-start-game" disabled>🚀 START ADVENTURE!</button>
+</div>
+
+<!-- ── WORLD SELECT ───────────────────────────────────────────── -->
+<div id="screen-world-select" class="screen hidden" style="text-align:center">
+    <h2>🌍 Choose Your World!</h2>
+    <p>Host selects the world — all players will compete here</p>
+    <div id="world-grid"></div>
+    <button id="btn-confirm-world">✅ Start in This World!</button>
+</div>
+
+<!-- ── GAME (Canvas + HUD) ────────────────────────────────────── -->
+<div id="screen-game" class="screen hidden" style="position:relative;padding:0">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- Top bar -->
+    <div id="canvas-header">
+        <div id="canvas-title">⚔️ Math Adventure Quest</div>
+        <div id="hud-world"></div>
+        <div id="hud-round"></div>
+    </div>
+
+    <!-- Player HUD at bottom -->
+    <div id="game-hud"></div>
+</div>
+
+<!-- ── QUESTION ───────────────────────────────────────────────── -->
+<div id="screen-question" class="screen hidden">
+    <div class="question-modal">
+        <div class="q-header">
+            <span id="q-number">Q 1/25</span>
+            <span id="q-world-badge">🌲 World 1</span>
+        </div>
+
+        <div class="q-timer-row">
+            <div id="q-timer">20</div>
+            <div class="q-timer-track">
+                <div id="q-timer-bar"></div>
+            </div>
+        </div>
+
+        <div id="q-text">Question text appears here</div>
+
+        <div id="q-options"></div>
+
+        <div style="text-align:center;font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:8px">
+            Answer on your phone!
+        </div>
+        <div id="q-answered"></div>
+    </div>
+</div>
+
+<!-- ── RESULT ─────────────────────────────────────────────────── -->
+<div id="screen-result" class="screen hidden">
+    <div class="result-modal">
+        <h2>📊 Round Results</h2>
+        <div id="result-correct"></div>
+        <div id="result-list"></div>
+    </div>
+</div>
+
+<!-- ── GAME OVER ──────────────────────────────────────────────── -->
+<div id="screen-game-over" class="screen hidden" style="text-align:center">
+    <h1>🎉 Adventure Complete!</h1>
+    <div id="go-winner"></div>
+    <div id="go-scoreboard"></div>
+    <div class="go-actions">
+        <button id="btn-play-again"  class="btn-go">🔄 Play Again</button>
+        <button id="btn-return-menu" class="btn-go">🏠 Main Menu</button>
+    </div>
+</div>
+
+<!-- ── POPUP TOAST ────────────────────────────────────────────── -->
+<div id="popup"></div>
+
+<!-- ── Scripts ───────────────────────────────────────────────── -->
+<script src="https://www.airconsole.com/api/airconsole-1.8.0.js"></script>
+<script src="question-engine.js"></script>
+<script src="world.js"></script>
+<script src="multiplayer.js"></script>
+<script src="ui.js"></script>
+<script>
+    // Expose CHAR_EMOJI globally for game.js
+    const CHAR_EMOJI = { explorer_boy: '🧒', explorer_girl: '👧', robomath: '🤖', astro_cat: '🐱' };
+
+    // Size canvas to fill the window
+    function resizeCanvas() {
+        const canvas = document.getElementById('game-canvas');
+        if (!canvas) return;
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+</script>
+<script src="game.js"></script>
+
+</body>
+</html>
