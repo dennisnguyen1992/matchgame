@@ -171,19 +171,9 @@ netlify deploy --prod --dir=.
 
 ---
 
-## 🎵 Audio Integration (Optional)
+## 🎵 Audio Effects
 
-The project is wired for [Howler.js](https://howlerjs.com/). Add audio files to `screen/assets/sounds/` and initialize in `game.js`:
-
-```js
-const sounds = {
-    bgm:     new Howl({ src: ['assets/sounds/theme.mp3'], loop: true, volume: 0.5 }),
-    correct: new Howl({ src: ['assets/sounds/correct.mp3'] }),
-    wrong:   new Howl({ src: ['assets/sounds/wrong.mp3'] }),
-    boss:    new Howl({ src: ['assets/sounds/boss.mp3'], loop: true }),
-    treasure:new Howl({ src: ['assets/sounds/victory.mp3'] }),
-};
-```
+The game includes built-in Web Audio effects in `sound.js`, so no audio files or external library are required. The screen and each controller play sounds for game start, new questions, correct and wrong rounds, level-ups, and victory. Audio is unlocked from the first player or screen interaction to comply with browser autoplay rules.
 
 ---
 

@@ -52,18 +52,22 @@ class Game {
     // ── Screen button listeners ──────────────────────────────────
     _setupScreenListeners() {
         document.getElementById('btn-start-game')?.addEventListener('click', () => {
+            window.gameAudio?.unlock();
             this._tryStartGame();
         });
 
         document.getElementById('btn-play-again')?.addEventListener('click', () => {
+            window.gameAudio?.unlock();
             this._resetToLobby();
         });
 
         document.getElementById('btn-return-menu')?.addEventListener('click', () => {
+            window.gameAudio?.unlock();
             this._resetToLobby();
         });
 
         document.getElementById('btn-confirm-world')?.addEventListener('click', () => {
+            window.gameAudio?.unlock();
             this._launchGame(this.selectedWorldId);
         });
     }
@@ -178,6 +182,7 @@ class Game {
         });
 
         this._setState(STATES.PLAYING);
+        window.gameAudio?.play('start');
         this.ui.showScreen('game');
         this.ui.setCanvasTitle(`${this.world.emoji} ${this.world.name}`);
         this.ui.showPopup(`🚀 Adventure begins in ${this.world.name}!`, 'success', 3000);

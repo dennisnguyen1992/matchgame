@@ -162,6 +162,7 @@ class UIManager {
         }
 
         if (qAnswered) qAnswered.innerHTML = '';
+        window.gameAudio?.play('question');
         this._startTimer(20, qTimer, qTimerBar);
         this.showScreen('question');
     }
@@ -206,6 +207,7 @@ class UIManager {
     // ── Result screen ────────────────────────────────────────────
     showRoundResult(results, correctAnswer) {
         const { rList, rCorrect } = this.el;
+        window.gameAudio?.play(results.some(result => result.correct) ? 'correct' : 'wrong');
         if (rCorrect) rCorrect.textContent = `✅ Answer: ${correctAnswer}`;
 
         if (rList) {
@@ -256,6 +258,7 @@ class UIManager {
     // ── Game Over ────────────────────────────────────────────────
     showGameOver(winner, scoreboard) {
         const { goWinner, goBoard } = this.el;
+        window.gameAudio?.play('victory');
         if (goWinner) {
             goWinner.innerHTML = `
                 <div class="go-trophy">🏆</div>

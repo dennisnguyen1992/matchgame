@@ -128,12 +128,14 @@ class Controller {
 
             case 'game_start':
                 this.gameState = 'PLAYING';
+                window.gameAudio?.play('start');
                 this._showScreen('playing');
                 this._toast(`🚀 Adventure starts! World: ${data.worldName}`, 'success');
                 break;
 
             case 'question':
                 this.gameState = 'QUESTION';
+                window.gameAudio?.play('question');
                 this.question  = data.data;
                 this.answered  = false;
                 this._showQuestion(data.data, data.round);
@@ -156,6 +158,7 @@ class Controller {
                 break;
 
             case 'level_up':
+                window.gameAudio?.play('levelUp');
                 this._toast(`🎉 Level Up! You are now Level ${data.level}!`, 'success');
                 break;
 
@@ -201,6 +204,7 @@ class Controller {
 
         // Ready button
         this.el.btnReady?.addEventListener('click', () => {
+            window.gameAudio?.unlock();
             if (!this.nickname) {
                 this.nickname = `Hero ${this.playerId}`;
                 if (this.el.nickInput) this.el.nickInput.value = this.nickname;
@@ -215,12 +219,14 @@ class Controller {
 
         // Character select button
         this.el.btnCharSel?.addEventListener('click', () => {
+            window.gameAudio?.unlock();
             this._showScreen('charSelect');
             this._buildCharGrid();
         });
 
         // Host start (only if isHost)
         document.getElementById('btn-host-start')?.addEventListener('click', () => {
+            window.gameAudio?.unlock();
             this._send({ type: 'start_game' });
         });
     }
@@ -356,6 +362,7 @@ class Controller {
                 btn.innerHTML = `<span class="ans-label">${ANSWER_LABELS[i]}</span><span class="ans-val">${opt}</span>`;
                 btn.addEventListener('click', () => {
                     if (this.answered) return;
+                    window.gameAudio?.unlock();
                     this.answered = true;
 
                     // Highlight selected
@@ -396,6 +403,7 @@ class Controller {
     // ── Answer feedback ────────────────────────────────────────
     _showFeedback(correct, correctAnswer) {
         clearInterval(this.timerInt);
+        window.gameAudio?.play(correct ? 'correct' : 'wrong');
         const { fbIcon, fbMsg, fbSub, fbAnswer } = this.el;
 
         if (fbIcon)   fbIcon.textContent   = correct ? '✅' : '❌';
@@ -447,6 +455,7 @@ class Controller {
         }
 
         const isWinner = myRank === 1;
+        window.gameAudio?.play(isWinner ? 'victory' : 'wrong');
         if (isWinner) this._toast('🎉 YOU WON! Amazing math skills!', 'success');
 
         this._showScreen('gameOver');
