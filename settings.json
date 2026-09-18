@@ -1,5 +1,5 @@
 {
-  "name": "MatchGame",
+  "name": "matchgame",
   "screen": "screen/index.html",
   "controller": "controller/index.html"
 }
