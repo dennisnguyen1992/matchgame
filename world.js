@@ -175,10 +175,12 @@ class WorldRenderer {
     }
 
     _buildParticles() {
+        const width = this.canvas.clientWidth || this.canvas.width;
+        const height = this.canvas.clientHeight || this.canvas.height;
         for (let i = 0; i < 18; i++) {
             this.particles.push({
-                x: Math.random() * this.canvas.width,
-                y: Math.random() * this.canvas.height,
+                x: Math.random() * width,
+                y: Math.random() * height,
                 spd: Math.random() * 0.4 + 0.15,
                 sz: Math.random() * 22 + 10,
                 op: Math.random() * 0.25 + 0.08,
@@ -189,16 +191,25 @@ class WorldRenderer {
 
     loadWorld(worldId) {
         this.world = WORLD_DATA.find(w => w.id === worldId) || WORLD_DATA[0];
-        this.waypoints = buildMapWaypoints(this.canvas.width, this.canvas.height);
+        this.waypoints = buildMapWaypoints(this.canvas.clientWidth || this.canvas.width, this.canvas.clientHeight || this.canvas.height);
         this.encounters = buildEncounters();
         this.frame = 0;
+    }
+
+    resize(width, height) {
+        if (!this.world) return;
+        this.waypoints = buildMapWaypoints(width, height);
+        this.particles = [];
+        this._buildParticles();
     }
 
     render(players) {
         if (!this.world) return;
         this.frame++;
         const ctx = this.ctx;
-        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        const width = this.canvas.clientWidth || this.canvas.width;
+        const height = this.canvas.clientHeight || this.canvas.height;
+        ctx.clearRect(0, 0, width, height);
         this._drawBackground();
         this._drawFloatingEmoji();
         this._drawPath();
@@ -210,20 +221,22 @@ class WorldRenderer {
     _drawBackground() {
         const ctx = this.ctx;
         const w = this.world;
-        const grad = ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+        const width = this.canvas.clientWidth || this.canvas.width;
+        const height = this.canvas.clientHeight || this.canvas.height;
+        const grad = ctx.createLinearGradient(0, 0, 0, height);
         grad.addColorStop(0, w.bgGradientTop);
         grad.addColorStop(1, w.bgGradientBot);
         ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        ctx.fillRect(0, 0, width, height);
 
         // Subtle grid overlay
         ctx.strokeStyle = 'rgba(255,255,255,0.04)';
         ctx.lineWidth = 1;
-        for (let x = 0; x < this.canvas.width; x += 60) {
-            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, this.canvas.height); ctx.stroke();
+        for (let x = 0; x < width; x += 60) {
+            ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
         }
-        for (let y = 0; y < this.canvas.height; y += 60) {
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(this.canvas.width, y); ctx.stroke();
+        for (let y = 0; y < height; y += 60) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(width, y); ctx.stroke();
         }
     }
 
@@ -233,7 +246,7 @@ class WorldRenderer {
         ctx.save();
         for (const p of this.particles) {
             p.y -= p.spd;
-            if (p.y < -40) p.y = this.canvas.height + 40;
+            if (p.y < -40) p.y = (this.canvas.clientHeight || this.canvas.height) + 40;
             ctx.globalAlpha = p.op + Math.sin(this.frame * 0.03 + p.idx) * 0.04;
             ctx.font = `${p.sz}px serif`;
             ctx.textAlign = 'center';
@@ -440,7 +453,7 @@ class WorldRenderer {
     _drawMapLegend() {
         const ctx = this.ctx;
         const w = this.world;
-        const lx = this.canvas.width - 180;
+        const lx = (this.canvas.clientWidth || this.canvas.width) - 180;
         const ly = 16;
 
         ctx.save();

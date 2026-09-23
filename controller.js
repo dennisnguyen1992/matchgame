@@ -46,6 +46,7 @@ class Controller {
             sPlaying:   document.getElementById('s-playing'),
             sQuestion:  document.getElementById('s-question'),
             sFeedback:  document.getElementById('s-feedback'),
+            sRoundResult: document.getElementById('s-round-result'),
             sGameOver:  document.getElementById('s-gameover'),
 
             // Loading
@@ -74,6 +75,7 @@ class Controller {
             playChar:   document.getElementById('play-char'),
             playName:   document.getElementById('play-name'),
             playWait:   document.getElementById('play-wait'),
+            btnHostQuit: document.getElementById('btn-host-quit'),
 
             // Question
             qRound:     document.getElementById('q-round'),
@@ -148,9 +150,6 @@ class Controller {
             case 'round_result':
                 this.gameState = 'PLAYING';
                 this._updatePlayerFromResults(data);
-                setTimeout(() => {
-                    if (this.gameState === 'PLAYING') this._showScreen('playing');
-                }, 1200);
                 break;
 
             case 'player_update':
@@ -229,6 +228,11 @@ class Controller {
             window.gameAudio?.unlock();
             this._send({ type: 'start_game' });
         });
+
+        this.el.btnHostQuit?.addEventListener('click', () => {
+            if (!this.isHost || !window.confirm('End the current game for everyone?')) return;
+            this._send({ type: 'force_quit' });
+        });
     }
 
     // ── Screen management ──────────────────────────────────────
@@ -240,6 +244,7 @@ class Controller {
             playing:  'sPlaying',
             question: 'sQuestion',
             feedback: 'sFeedback',
+            roundResult: 'sRoundResult',
             gameOver: 'sGameOver'
         };
         Object.values(map).forEach(k => this.el[k]?.classList.add('hidden'));
@@ -295,6 +300,7 @@ class Controller {
         // Show/hide host start button
         const hostBtn = document.getElementById('btn-host-start');
         if (hostBtn) hostBtn.style.display = this.isHost ? 'block' : 'none';
+        if (this.el.btnHostQuit) this.el.btnHostQuit.style.display = this.isHost ? 'block' : 'none';
     }
 
     // ── Character Select ───────────────────────────────────────
@@ -423,9 +429,19 @@ class Controller {
     }
 
     _updatePlayerFromResults(data) {
-        if (!data.players) return;
-        const me = data.players.find(p => p.id === this.playerId);
+        const me = data.players?.find(p => p.id === this.playerId);
         if (me) this._applyPlayerUpdate(me);
+        if (!data.result) return;
+
+        const icon = document.getElementById('rr-icon');
+        const msg = document.getElementById('rr-msg');
+        const stats = document.getElementById('rr-stats');
+        if (icon) icon.textContent = data.result.correct ? '✅' : data.result.timedOut ? '⏱️' : '❌';
+        if (msg) msg.textContent = data.result.correct ? 'Correct! You moved forward.' : data.result.timedOut ? 'Time ran out.' : 'Not this time.';
+        if (stats) stats.textContent = data.result.correct
+            ? `+${data.result.points} points · 📍 ${me?.position ?? data.result.position}/20`
+            : `${data.result.timedOut ? '-5' : '-10'} HP · 📍 ${me?.position ?? data.result.position}/20`;
+        this._showScreen('roundResult');
     }
 
     // ── Game Over ──────────────────────────────────────────────

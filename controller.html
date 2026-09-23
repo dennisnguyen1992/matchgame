@@ -151,6 +151,8 @@ html, body {
 .btn-primary   { background: linear-gradient(135deg, #6C63FF, #4ECDC4); color: white; }
 .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 2px solid rgba(255,255,255,0.2); }
 .btn-host      { background: linear-gradient(135deg, #FFD700, #F39C12); color: #1a1a1a; display: none; }
+.btn-danger    { background: linear-gradient(135deg, #E74C3C, #9B2C2C); color: white; }
+.host-control  { display: none; width: min(100%, 400px); margin-top: 8px; }
 .btn:disabled  { opacity: 0.4; cursor: not-allowed; }
 
 /* ── CHARACTER SELECT ─────────────────────────────────────────── */
@@ -380,6 +382,18 @@ html, body {
 #fb-sub   { font-size: 16px; color: rgba(255,255,255,0.7); text-align: center; }
 #fb-correct-answer { font-size: 18px; font-weight: 700; color: var(--green); margin-top: 12px; text-align: center; }
 
+#s-round-result { justify-content: center; }
+.round-result-card {
+    width: 100%; max-width: 400px; padding: 28px 20px;
+    background: var(--card); border: 2px solid var(--border);
+    border-radius: var(--radius); text-align: center;
+}
+.round-result-label { font-size: 12px; letter-spacing: 2px; color: var(--sub); font-weight: 800; }
+#rr-icon { font-size: 72px; margin-top: 10px; }
+#rr-msg { font-size: 28px; font-weight: 900; margin: 12px 0 8px; }
+#rr-stats { font-size: 18px; font-weight: 800; color: var(--gold); }
+#rr-wait { margin-top: 14px; color: var(--sub); }
+
 /* ── GAME OVER ────────────────────────────────────────────────── */
 #s-gameover {
     background: radial-gradient(ellipse at center, #2C1654, #0D0D2B);
@@ -521,6 +535,7 @@ html, body {
     </div>
 
     <div id="play-wait">⏳ Get ready for the next question...</div>
+    <button id="btn-host-quit" class="btn btn-danger host-control">🏠 End Game</button>
 </div>
 
 <!-- ── QUESTION ────────────────────────────────────────────────── -->
@@ -544,6 +559,17 @@ html, body {
     <div id="fb-msg">Correct!</div>
     <div id="fb-sub">You earned points!</div>
     <div id="fb-correct-answer"></div>
+</div>
+
+<!-- ── ROUND RESULT ───────────────────────────────────────────── -->
+<div id="s-round-result" class="screen hidden">
+    <div class="round-result-card">
+        <div class="round-result-label">ROUND RESULT</div>
+        <div id="rr-icon">✅</div>
+        <div id="rr-msg">Correct!</div>
+        <div id="rr-stats"></div>
+        <div id="rr-wait">Waiting for the next question...</div>
+    </div>
 </div>
 
 <!-- ── GAME OVER ───────────────────────────────────────────────── -->

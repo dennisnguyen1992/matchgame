@@ -109,8 +109,12 @@
     function resizeCanvas() {
         const canvas = document.getElementById('game-canvas');
         if (!canvas) return;
-        canvas.width  = window.innerWidth;
-        canvas.height = window.innerHeight;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(window.innerWidth * dpr);
+        canvas.height = Math.round(window.innerHeight * dpr);
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        canvas.getContext('2d')?.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();

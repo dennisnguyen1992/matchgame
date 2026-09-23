@@ -37,6 +37,11 @@ class Game {
         this.ui.updateLobby([]);
 
         this._setupScreenListeners();
+        window.addEventListener('resize', () => {
+            if (this.renderer) {
+                this.renderer.resize(window.innerWidth, window.innerHeight);
+            }
+        });
         this._loop();
     }
 
@@ -103,6 +108,8 @@ class Game {
                 this._onReady(player); break;
             case 'start_game':
                 if (player.id === 1) this._tryStartGame(); break;
+            case 'force_quit':
+                if (player.id === 1) this._resetToLobby(); break;
             case 'answer':
                 this._onAnswer(player, data.value, data.timestamp || Date.now()); break;
             case 'request_sync':
@@ -225,6 +232,7 @@ class Game {
         this.ui.showPopup(popups[enc] || popups.normal, enc === 'boss' ? 'danger' : 'info', 2200);
 
         setTimeout(() => {
+            if (this.state !== STATES.PLAYING) return;
             this._setState(STATES.QUESTION);
             this.mp.broadcast({ type: 'question', data: this.question, round: this.round });
             this.ui.showQuestion(this.question, this.round, this.MAX_ROUNDS, this.mp.getPlayers());
@@ -283,19 +291,23 @@ class Game {
         const results = [...this.pendingAns.values()];
         this.ui.showRoundResult(results, this.question.answer);
 
-        this.mp.broadcast({
-            type: 'round_result',
-            correctAnswer: this.question.answer,
-            results: results.map(r => ({
-                playerId: r.player.id,
-                correct: r.correct,
-                points: r.points || 0,
-                timedOut: r.timedOut
-            })),
-            players: this._publicPlayers()
-        });
+        for (const p of this.mp.getPlayers()) {
+            const result = results.find(r => r.player.id === p.id);
+            this.mp.sendToPlayer(p.id, {
+                type: 'round_result',
+                correctAnswer: this.question.answer,
+                result: {
+                    correct: result?.correct || false,
+                    points: result?.points || 0,
+                    timedOut: result?.timedOut || false,
+                    position: p.position
+                },
+                players: this._publicPlayers()
+            });
+        }
 
         setTimeout(() => {
+            if (this.state !== STATES.REVEAL) return;
             this._setState(STATES.PLAYING);
             this.ui.showScreen('game');
             const winner = this._checkWin();
