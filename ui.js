@@ -120,13 +120,13 @@ class UIManager {
     }
 
     // ── World Select ─────────────────────────────────────────────
-    buildWorldGrid(worlds, onSelect) {
+    buildWorldGrid(worlds, onSelect, selectedWorldId = null) {
         const { worldGrid } = this.el;
         if (!worldGrid) return;
         worldGrid.innerHTML = '';
         worlds.forEach(w => {
             const card = document.createElement('div');
-            card.className = 'world-card';
+            card.className = `world-card${w.id === selectedWorldId ? ' selected' : ''}`;
             card.style.setProperty('--wc', w.primaryColor);
             card.innerHTML = `
                 <div class="wc-emoji">${w.emoji}</div>
@@ -136,7 +136,7 @@ class UIManager {
             card.addEventListener('click', () => {
                 worldGrid.querySelectorAll('.world-card').forEach(c => c.classList.remove('selected'));
                 card.classList.add('selected');
-                onSelect(w.id);
+                onSelect?.(w.id);
             });
             worldGrid.appendChild(card);
         });

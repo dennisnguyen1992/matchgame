@@ -25,9 +25,8 @@
 <!-- ── WORLD SELECT ───────────────────────────────────────────── -->
 <div id="screen-world-select" class="screen hidden" style="text-align:center">
     <h2>🌍 Choose Your World!</h2>
-    <p>Host selects the world — all players will compete here</p>
+    <p>Waiting for the host to choose a world on their controller</p>
     <div id="world-grid"></div>
-    <button id="btn-confirm-world">✅ Start in This World!</button>
 </div>
 
 <!-- ── GAME (Canvas + HUD) ────────────────────────────────────── -->
@@ -101,10 +100,8 @@
 <script src="world.js"></script>
 <script src="multiplayer.js"></script>
 <script src="ui.js"></script>
+<script src="version.js"></script>
 <script>
-    // Expose CHAR_EMOJI globally for game.js
-    const CHAR_EMOJI = { explorer_boy: '🧒', explorer_girl: '👧', robomath: '🤖', astro_cat: '🐱' };
-
     // Size canvas to fill the window
     function resizeCanvas() {
         const canvas = document.getElementById('game-canvas');

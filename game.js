@@ -5,6 +5,7 @@ const STATES = {
     PLAYING:  'PLAYING',
     QUESTION: 'QUESTION',
     REVEAL:   'REVEAL',
+    WORLD_SELECT: 'WORLD_SELECT',
     GAME_OVER:'GAME_OVER'
 };
 
@@ -71,10 +72,6 @@ class Game {
             this._resetToLobby();
         });
 
-        document.getElementById('btn-confirm-world')?.addEventListener('click', () => {
-            window.gameAudio?.unlock();
-            this._launchGame(this.selectedWorldId);
-        });
     }
 
     // ── AirConsole callbacks (called by MultiplayerManager) ──────
@@ -107,6 +104,17 @@ class Game {
                 this._onReady(player); break;
             case 'start_game':
                 if (this.mp.isHost(player)) this._tryStartGame(); break;
+            case 'select_world':
+                if (this.state === STATES.WORLD_SELECT && this.mp.isHost(player)) {
+                    this.selectedWorldId = Number(data.worldId) || 1;
+                    this._broadcastWorldSelect();
+                }
+                break;
+            case 'launch_game':
+                if (this.state === STATES.WORLD_SELECT && this.mp.isHost(player)) {
+                    this._launchGame(this.selectedWorldId);
+                }
+                break;
             case 'force_quit':
                 this._resetToLobby(); break;
             case 'answer':
@@ -155,18 +163,24 @@ class Game {
             this.mp.addBot('medium');
         }
 
-        // Show world select
-        this.ui.buildWorldGrid(WORLD_DATA, (id) => { this.selectedWorldId = id; });
-        this.ui.showScreen('worldSelect');
+        this._setState(STATES.WORLD_SELECT);
+        this._broadcastWorldSelect();
+    }
 
-        // Auto-launch if host doesn't pick within 8 seconds
-        setTimeout(() => {
-            if (this.state === STATES.LOBBY) this._launchGame(this.selectedWorldId);
-        }, 8000);
+    _broadcastWorldSelect() {
+        this.ui.buildWorldGrid(WORLD_DATA, () => {}, this.selectedWorldId);
+        this.ui.showScreen('worldSelect');
+        this.mp.broadcast({
+            type: 'world_select',
+            worlds: WORLD_DATA.map(({ id, name, subtitle, emoji, skills, primaryColor }) => ({
+                id, name, subtitle, emoji, skills, primaryColor
+            })),
+            selectedWorldId: this.selectedWorldId
+        });
     }
 
     _launchGame(worldId) {
-        if (this.state !== STATES.LOBBY) return;
+        if (![STATES.LOBBY, STATES.WORLD_SELECT].includes(this.state)) return;
         this.world = WORLD_DATA.find(w => w.id === worldId) || WORLD_DATA[0];
         this.round = 0;
 

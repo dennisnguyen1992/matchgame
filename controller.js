@@ -29,10 +29,17 @@ class Controller {
         this.nickname    = '';
         this.answered    = false;
         this.timerInt    = null;
+        this.worlds      = [];
+        this.selectedWorldIndex = 0;
 
         this._cacheEls();
         this._bindAirConsole();
         this._bindUI();
+        const versionEl = document.getElementById('load-version');
+        const version = window.GAME_VERSION || '1.0.2';
+        if (versionEl) versionEl.textContent = `Version ${version}`;
+        const playVersionEl = document.getElementById('play-version');
+        if (playVersionEl) playVersionEl.textContent = `Version ${version}`;
         this._showScreen('loading');
     }
 
@@ -42,6 +49,7 @@ class Controller {
             // Screens
             sLoading:   document.getElementById('s-loading'),
             sLobby:     document.getElementById('s-lobby'),
+            sWorldSelect: document.getElementById('s-world-select'),
             sCharSel:   document.getElementById('s-char-select'),
             sPlaying:   document.getElementById('s-playing'),
             sQuestion:  document.getElementById('s-question'),
@@ -59,6 +67,15 @@ class Controller {
             nickInput:  document.getElementById('nick-input'),
             btnReady:   document.getElementById('btn-ready'),
             btnCharSel: document.getElementById('btn-char-select'),
+            worldRole: document.getElementById('controller-world-role'),
+            worldEmoji: document.getElementById('controller-world-emoji'),
+            worldName: document.getElementById('controller-world-name'),
+            worldSubtitle: document.getElementById('controller-world-subtitle'),
+            worldSkills: document.getElementById('controller-world-skills'),
+            worldPrev: document.getElementById('btn-controller-world-prev'),
+            worldNext: document.getElementById('btn-controller-world-next'),
+            worldStart: document.getElementById('btn-controller-world-start'),
+            worldWait: document.getElementById('controller-world-wait'),
 
             // Character select
             charGrid:   document.getElementById('char-grid'),
@@ -130,6 +147,15 @@ class Controller {
             case 'lobby_update':
                 this._onLobbyUpdate(data);
                 break;
+
+            case 'world_select': {
+                this.gameState = 'WORLD_SELECT';
+                this.worlds = data.worlds || [];
+                const selectedIndex = this.worlds.findIndex(w => w.id === data.selectedWorldId);
+                this.selectedWorldIndex = selectedIndex >= 0 ? selectedIndex : 0;
+                this._showWorldSelect();
+                break;
+            }
 
             case 'game_start':
                 if (data.hostPlayerId) this.isHost = data.hostPlayerId === this.playerId;
@@ -246,6 +272,12 @@ class Controller {
             this._closeQuitConfirm();
             this._send({ type: 'force_quit' });
         });
+        this.el.worldPrev?.addEventListener('click', () => this._changeWorld(-1));
+        this.el.worldNext?.addEventListener('click', () => this._changeWorld(1));
+        this.el.worldStart?.addEventListener('click', () => {
+            window.gameAudio?.unlock();
+            this._send({ type: 'launch_game' });
+        });
     }
 
     // ── Screen management ──────────────────────────────────────
@@ -253,6 +285,7 @@ class Controller {
         const map = {
             loading:  'sLoading',
             lobby:    'sLobby',
+            worldSelect: 'sWorldSelect',
             charSelect:'sCharSel',
             playing:  'sPlaying',
             question: 'sQuestion',
@@ -274,6 +307,30 @@ class Controller {
         if (!this.el.btnHostQuit) return;
         const inGame = ['playing', 'question', 'feedback', 'roundResult'].includes(this.gameState);
         this.el.btnHostQuit.style.display = inGame ? 'block' : 'none';
+    }
+
+    _showWorldSelect() {
+        const world = this.worlds[this.selectedWorldIndex];
+        if (!world) return;
+        const isHost = this.isHost;
+        if (this.el.worldRole) this.el.worldRole.textContent = isHost ? 'Choose the next adventure' : 'The host is choosing the world';
+        if (this.el.worldEmoji) this.el.worldEmoji.textContent = world.emoji;
+        if (this.el.worldName) this.el.worldName.textContent = world.name;
+        if (this.el.worldSubtitle) this.el.worldSubtitle.textContent = world.subtitle;
+        if (this.el.worldSkills) this.el.worldSkills.textContent = world.skills;
+        if (this.el.worldPrev) this.el.worldPrev.style.display = isHost ? 'block' : 'none';
+        if (this.el.worldNext) this.el.worldNext.style.display = isHost ? 'block' : 'none';
+        if (this.el.worldStart) this.el.worldStart.style.display = isHost ? 'block' : 'none';
+        if (this.el.worldWait) this.el.worldWait.style.display = isHost ? 'none' : 'block';
+        this._showScreen('worldSelect');
+    }
+
+    _changeWorld(direction) {
+        if (!this.isHost || !this.worlds.length) return;
+        this.selectedWorldIndex = (this.selectedWorldIndex + direction + this.worlds.length) % this.worlds.length;
+        const world = this.worlds[this.selectedWorldIndex];
+        this._send({ type: 'select_world', worldId: world.id });
+        this._showWorldSelect();
     }
 
     _closeQuitConfirm() {

@@ -59,6 +59,7 @@ html, body {
 @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.08); } }
 .load-title { font-size: 24px; font-weight: 800; margin: 12px 0 6px; text-align: center; }
 #load-msg   { font-size: 15px; color: var(--sub); text-align: center; }
+#load-version { font-size: 12px; color: rgba(255,255,255,0.38); margin-top: 8px; letter-spacing: 0.5px; }
 .load-dots  { display: flex; gap: 8px; justify-content: center; margin-top: 20px; }
 .load-dot   {
     width: 10px; height: 10px; border-radius: 50%; background: var(--gold);
@@ -135,6 +136,19 @@ html, body {
     width: 100%; max-width: 400px;
     display: flex; flex-direction: column; gap: 10px;
 }
+
+#s-world-select { justify-content: center; }
+.world-picker { width: 100%; max-width: 400px; text-align: center; }
+.world-picker h2 { font-size: 24px; margin-bottom: 8px; }
+.world-picker-sub { color: var(--sub); font-size: 14px; margin-bottom: 18px; }
+#controller-world-emoji { font-size: 72px; line-height: 1; }
+#controller-world-name { font-size: 25px; font-weight: 900; margin: 10px 0 4px; }
+#controller-world-subtitle { color: var(--sub); font-size: 14px; min-height: 20px; }
+#controller-world-skills { color: var(--gold); font-size: 13px; margin: 12px 0 20px; }
+.world-picker-actions { display: flex; gap: 10px; margin-bottom: 14px; }
+.world-picker-actions .btn { flex: 1; }
+#btn-controller-world-start { display: none; }
+#controller-world-wait { color: var(--sub); font-size: 14px; }
 
 .btn {
     width: 100%;
@@ -281,6 +295,7 @@ html, body {
     text-align: center;
     animation: waitPulse 1.5s ease infinite alternate;
 }
+#play-version { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: -4px; }
 @keyframes waitPulse { from { opacity: 0.5; } to { opacity: 1; } }
 
 /* ── QUESTION ────────────────────────────────────────────────── */
@@ -472,6 +487,7 @@ html, body {
     <div class="load-logo">⚔️</div>
     <div class="load-title">Math Adventure Quest</div>
     <div id="load-msg">Connecting to game...</div>
+    <div id="load-version">Version 1.0.2</div>
     <div class="load-dots">
         <div class="load-dot"></div>
         <div class="load-dot"></div>
@@ -502,6 +518,23 @@ html, body {
         <button id="btn-char-select" class="btn btn-secondary">🎭 Choose Character</button>
         <button id="btn-ready"       class="btn btn-primary">✅ I'm Ready!</button>
         <button id="btn-host-start"  class="btn btn-host">🚀 START GAME (Host)</button>
+    </div>
+</div>
+
+<!-- ── CONTROLLER WORLD SELECT ────────────────────────────────── -->
+<div id="s-world-select" class="screen hidden">
+    <div class="world-picker">
+        <div class="world-picker-sub" id="controller-world-role">The host is choosing the world</div>
+        <div id="controller-world-emoji">🌲</div>
+        <div id="controller-world-name">Kindergarten Explorer</div>
+        <div id="controller-world-subtitle">Magical Forest Adventure</div>
+        <div id="controller-world-skills">Counting · Number Recognition · Basic Addition</div>
+        <div class="world-picker-actions">
+            <button id="btn-controller-world-prev" class="btn btn-secondary" aria-label="Previous world">◀</button>
+            <button id="btn-controller-world-next" class="btn btn-secondary" aria-label="Next world">▶</button>
+        </div>
+        <button id="btn-controller-world-start" class="btn btn-primary">🚀 Start This Map</button>
+        <div id="controller-world-wait">Waiting for the host...</div>
     </div>
 </div>
 
@@ -552,6 +585,7 @@ html, body {
     </div>
 
     <div id="play-wait">⏳ Get ready for the next question...</div>
+    <div id="play-version">Version 1.0.2</div>
 </div>
 
 <!-- ── QUESTION ────────────────────────────────────────────────── -->
@@ -617,6 +651,7 @@ html, body {
 
 <script src="https://www.airconsole.com/api/airconsole-1.8.0.js"></script>
 <script src="sound.js"></script>
+<script src="version.js"></script>
 <script src="controller.js"></script>
 
 </body>

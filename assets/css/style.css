@@ -177,6 +177,7 @@ html, body {
     gap: 14px;
     width: min(98vw, 1300px);
     margin-bottom: 24px;
+    pointer-events: none;
 }
 
 .world-card {

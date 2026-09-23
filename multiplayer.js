@@ -49,9 +49,14 @@ class MultiplayerManager {
     _makePlayer(id, deviceId) {
         const nicknames = ['Hero Red', 'Hero Teal', 'Hero Blue', 'Hero Orange'];
         const chars = ['explorer_boy', 'explorer_girl', 'robomath', 'astro_cat'];
+        const airConsoleName = typeof this.ac.getNickname === 'function'
+            ? this.ac.getNickname(deviceId)
+            : '';
+        const nickname = String(airConsoleName || '').trim().substring(0, 12)
+            || nicknames[(id - 1) % 4];
         return {
             id, deviceId,
-            nickname: nicknames[(id - 1) % 4],
+            nickname,
             character: chars[(id - 1) % 4],
             hp: 100, maxHp: 100,
             xp: 0, level: 1,
