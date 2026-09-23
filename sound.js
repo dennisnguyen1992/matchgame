@@ -27,8 +27,11 @@ class SoundManager {
             this.masterGain.connect(this.context.destination);
         }
 
-        if (this.context.state === 'suspended') this.context.resume();
+        const resumePromise = this.context.state === 'suspended'
+            ? this.context.resume()
+            : Promise.resolve();
         this.unlocked = true;
+        return resumePromise;
     }
 
     playWorldMusic(worldId) {
@@ -38,10 +41,13 @@ class SoundManager {
 
         this.stopWorldMusic();
         this.music = new Audio(url);
+        this.music.preload = 'auto';
         this.music.loop = true;
-        this.music.volume = 0.12;
+        this.music.volume = 0.18;
         this.musicWorldId = worldId;
-        this.music.play().catch(() => {});
+        const startMusic = () => this.music?.play().catch(() => {});
+        if (this.context?.state === 'suspended') this.context.resume().then(startMusic);
+        else startMusic();
     }
 
     stopWorldMusic() {
@@ -55,6 +61,16 @@ class SoundManager {
 
     play(name, options = {}) {
         if (!this.unlocked || !this.context || !this.masterGain) return;
+        if (this.context.state === 'suspended') {
+            this.context.resume().then(() => this._playPattern(name, options));
+            return;
+        }
+
+        this._playPattern(name, options);
+    }
+
+    _playPattern(name, options) {
+        if (!this.context || !this.masterGain) return;
 
         const patterns = {
             start:    [[523, 0, 0.12], [659, 0.1, 0.12], [784, 0.2, 0.2]],
