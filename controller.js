@@ -129,7 +129,9 @@ class Controller {
                 break;
 
             case 'game_start':
+                if (data.hostPlayerId) this.isHost = data.hostPlayerId === this.playerId;
                 this.gameState = 'PLAYING';
+                this._syncHostControls();
                 window.gameAudio?.play('start');
                 this._showScreen('playing');
                 this._toast(`🚀 Adventure starts! World: ${data.worldName}`, 'success');
@@ -254,6 +256,13 @@ class Controller {
             target.classList.add('slide-in');
             setTimeout(() => target.classList.remove('slide-in'), 500);
         }
+        this._syncHostControls();
+    }
+
+    _syncHostControls() {
+        if (!this.el.btnHostQuit) return;
+        const inGame = ['playing', 'question', 'feedback', 'roundResult'].includes(this.gameState);
+        this.el.btnHostQuit.style.display = this.isHost && inGame ? 'block' : 'none';
     }
 
     _showScreenForState(state) {
@@ -300,7 +309,7 @@ class Controller {
         // Show/hide host start button
         const hostBtn = document.getElementById('btn-host-start');
         if (hostBtn) hostBtn.style.display = this.isHost ? 'block' : 'none';
-        if (this.el.btnHostQuit) this.el.btnHostQuit.style.display = this.isHost ? 'block' : 'none';
+        this._syncHostControls();
     }
 
     // ── Character Select ───────────────────────────────────────

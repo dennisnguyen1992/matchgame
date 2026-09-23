@@ -5,6 +5,7 @@ class MultiplayerManager {
         this.game = game;
         this.players = new Map();   // deviceId → player
         this.nextId = 1;
+        this.hostDeviceId = null;
         this._initAirConsole();
     }
 
@@ -17,12 +18,13 @@ class MultiplayerManager {
                 return;
             }
             const player = this._makePlayer(this.nextId++, did);
+            if (this.hostDeviceId === null) this.hostDeviceId = did;
             this.players.set(did, player);
             console.log(`[MP] Player ${player.id} connected — device ${did}`);
             this.ac.message(did, {
                 type: 'player_assigned',
                 playerId: player.id,
-                isHost: player.id === 1,
+                isHost: did === this.hostDeviceId,
                 player,
                 gameState: this.game.state
             });
@@ -81,6 +83,7 @@ class MultiplayerManager {
 
     // ── Queries ──────────────────────────────────────────────────
     getPlayers() { return [...this.players.values()]; }
+    isHost(player) { return player?.deviceId === this.hostDeviceId; }
     getPlayerCount() { return this.players.size; }
     humanCount() { return this.getPlayers().filter(p => !p.isBot).length; }
 

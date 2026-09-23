@@ -107,9 +107,9 @@ class Game {
             case 'ready':
                 this._onReady(player); break;
             case 'start_game':
-                if (player.id === 1) this._tryStartGame(); break;
+                if (this.mp.isHost(player)) this._tryStartGame(); break;
             case 'force_quit':
-                if (player.id === 1) this._resetToLobby(); break;
+                if (this.mp.isHost(player)) this._resetToLobby(); break;
             case 'answer':
                 this._onAnswer(player, data.value, data.timestamp || Date.now()); break;
             case 'request_sync':
@@ -185,6 +185,7 @@ class Game {
         this.mp.broadcast({
             type: 'game_start',
             worldId, worldName: this.world.name,
+            hostPlayerId: this.mp.getPlayers().find(p => this.mp.isHost(p))?.id,
             players: this._publicPlayers()
         });
 
