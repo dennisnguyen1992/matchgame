@@ -171,9 +171,9 @@ netlify deploy --prod --dir=.
 
 ---
 
-## 🎵 Audio Effects
+## 🎵 Audio
 
-The game includes built-in Web Audio effects in `sound.js`, so no audio files or external library are required. The screen and each controller play sounds for game start, new questions, correct and wrong rounds, level-ups, and victory. Audio is unlocked from the first player or screen interaction to comply with browser autoplay rules.
+The game includes built-in Web Audio effects in `sound.js`, plus low-volume looping music for each world. Music uses the free SoundHelix example tracks (`soundhelix.com`) and starts after the first screen interaction to comply with browser autoplay rules. The question timer plays a tick each second and adds a faster warning tick during the final five seconds.
 
 ---
 

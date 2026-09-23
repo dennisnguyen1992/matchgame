@@ -183,6 +183,7 @@ class Game {
 
         this._setState(STATES.PLAYING);
         window.gameAudio?.play('start');
+        window.gameAudio?.playWorldMusic(worldId);
         this.ui.showScreen('game');
         this.ui.setCanvasTitle(`${this.world.emoji} ${this.world.name}`);
         this.ui.showPopup(`🚀 Adventure begins in ${this.world.name}!`, 'success', 3000);
@@ -365,6 +366,7 @@ class Game {
 
     _resetToLobby() {
         clearTimeout(this.qTimerId);
+        window.gameAudio?.stopWorldMusic();
         this.round = 0;
         this.question = null;
         this.pendingAns.clear();

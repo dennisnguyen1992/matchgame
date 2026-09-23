@@ -6,6 +6,7 @@ const CHAR_EMOJI = { explorer_boy: '🧒', explorer_girl: '👧', robomath: '�
 class UIManager {
     constructor() {
         this.timerInterval = null;
+        this.timerWarningTimeout = null;
         this.popupTimer = null;
         this._cacheEls();
     }
@@ -185,10 +186,11 @@ class UIManager {
 
     stopTimer() {
         clearInterval(this.timerInterval);
+        clearTimeout(this.timerWarningTimeout);
     }
 
     _startTimer(seconds, timerEl, barEl) {
-        clearInterval(this.timerInterval);
+        this.stopTimer();
         let remaining = seconds;
         const tick = () => {
             if (timerEl) timerEl.textContent = remaining;
@@ -198,10 +200,21 @@ class UIManager {
                 barEl.style.background = pct > 50 ? '#2ECC71' : pct > 25 ? '#F39C12' : '#E74C3C';
             }
             if (timerEl) timerEl.classList.toggle('timer-urgent', remaining <= 5);
-            if (remaining-- <= 0) clearInterval(this.timerInterval);
+            if (remaining <= 0) return;
+
+            window.gameAudio?.play('tick', { urgent: remaining <= 5 });
+            if (remaining <= 5) {
+                this.timerWarningTimeout = setTimeout(() => {
+                    window.gameAudio?.play('tick', { urgent: true });
+                }, 500);
+            }
+            remaining--;
         };
         tick();
-        this.timerInterval = setInterval(tick, 1000);
+        this.timerInterval = setInterval(() => {
+            tick();
+            if (remaining <= 0) this.stopTimer();
+        }, 1000);
     }
 
     // ── Result screen ────────────────────────────────────────────
