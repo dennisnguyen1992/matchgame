@@ -76,6 +76,9 @@ class Controller {
             playName:   document.getElementById('play-name'),
             playWait:   document.getElementById('play-wait'),
             btnHostQuit: document.getElementById('btn-host-quit'),
+            quitConfirm: document.getElementById('quit-confirm'),
+            btnQuitNo:   document.getElementById('btn-quit-no'),
+            btnQuitYes:  document.getElementById('btn-quit-yes'),
 
             // Question
             qRound:     document.getElementById('q-round'),
@@ -171,6 +174,7 @@ class Controller {
             case 'reset':
                 this.gameState = 'LOBBY';
                 this.answered  = false;
+                this._closeQuitConfirm();
                 this._showScreen('lobby');
                 this._syncLobbyUI();
                 break;
@@ -232,7 +236,14 @@ class Controller {
         });
 
         this.el.btnHostQuit?.addEventListener('click', () => {
-            if (!this.isHost || !window.confirm('End the current game for everyone?')) return;
+            this.el.quitConfirm?.classList.add('visible');
+            this.el.quitConfirm?.setAttribute('aria-hidden', 'false');
+        });
+        this.el.btnQuitNo?.addEventListener('click', () => {
+            this._closeQuitConfirm();
+        });
+        this.el.btnQuitYes?.addEventListener('click', () => {
+            this._closeQuitConfirm();
             this._send({ type: 'force_quit' });
         });
     }
@@ -262,7 +273,12 @@ class Controller {
     _syncHostControls() {
         if (!this.el.btnHostQuit) return;
         const inGame = ['playing', 'question', 'feedback', 'roundResult'].includes(this.gameState);
-        this.el.btnHostQuit.style.display = this.isHost && inGame ? 'block' : 'none';
+        this.el.btnHostQuit.style.display = inGame ? 'block' : 'none';
+    }
+
+    _closeQuitConfirm() {
+        this.el.quitConfirm?.classList.remove('visible');
+        this.el.quitConfirm?.setAttribute('aria-hidden', 'true');
     }
 
     _showScreenForState(state) {

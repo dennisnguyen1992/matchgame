@@ -155,6 +155,23 @@ html, body {
 .host-control  { display: none; position: fixed; z-index: 20; right: 16px; bottom: 16px; width: auto; margin: 0; }
 .btn:disabled  { opacity: 0.4; cursor: not-allowed; }
 
+#quit-confirm {
+    position: fixed; inset: 0; z-index: 30;
+    display: none; align-items: center; justify-content: center;
+    padding: 20px; background: rgba(5, 7, 25, 0.78);
+}
+#quit-confirm.visible { display: flex; }
+.quit-dialog {
+    width: min(100%, 360px); padding: 24px 20px;
+    background: #171b44; border: 2px solid rgba(255,255,255,0.18);
+    border-radius: var(--radius); text-align: center;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+}
+.quit-dialog h2 { font-size: 22px; margin-bottom: 8px; }
+.quit-dialog p { color: var(--sub); margin-bottom: 18px; }
+.quit-actions { display: flex; gap: 10px; }
+.quit-actions .btn { flex: 1; }
+
 /* ── CHARACTER SELECT ─────────────────────────────────────────── */
 #s-char-select {
     background: linear-gradient(160deg, #1a1a3e, #2c1654);
@@ -583,6 +600,17 @@ html, body {
 </div>
 
 <button id="btn-host-quit" class="btn btn-danger host-control">🏠 End Game</button>
+
+<div id="quit-confirm" aria-hidden="true">
+    <div class="quit-dialog" role="dialog" aria-modal="true" aria-labelledby="quit-title">
+        <h2 id="quit-title">End the game?</h2>
+        <p>Return everyone to the home screen?</p>
+        <div class="quit-actions">
+            <button id="btn-quit-no" class="btn btn-secondary">No</button>
+            <button id="btn-quit-yes" class="btn btn-danger">Yes, End Game</button>
+        </div>
+    </div>
+</div>
 
 <!-- ── TOAST ───────────────────────────────────────────────────── -->
 <div id="toast"></div>

@@ -108,7 +108,7 @@ class Game {
             case 'start_game':
                 if (this.mp.isHost(player)) this._tryStartGame(); break;
             case 'force_quit':
-                if (this.mp.isHost(player)) this._resetToLobby(); break;
+                this._resetToLobby(); break;
             case 'answer':
                 this._onAnswer(player, data.value, data.timestamp || Date.now()); break;
             case 'request_sync':
