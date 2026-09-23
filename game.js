@@ -86,8 +86,7 @@ class Game {
 
         this.mp.broadcast({
             type: 'lobby_update',
-            players: this._publicPlayers(),
-            yourId: player.id
+            players: this._publicPlayers()
         });
     }
 

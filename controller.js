@@ -285,7 +285,7 @@ class Controller {
     }
 
     _onLobbyUpdate(data) {
-        if (data.yourId) this.playerId = data.yourId;
+        if (!this.playerId && data.yourId) this.playerId = data.yourId;
         // Find own player in the list
         if (data.players) {
             const me = data.players.find(p => p.id === this.playerId);
