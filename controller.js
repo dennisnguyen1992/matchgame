@@ -305,8 +305,8 @@ class Controller {
 
     _syncHostControls() {
         if (!this.el.btnHostQuit) return;
-        const inGame = ['playing', 'question', 'feedback', 'roundResult'].includes(this.gameState);
-        this.el.btnHostQuit.style.display = inGame ? 'block' : 'none';
+        const activeSession = ['WORLD_SELECT', 'PLAYING', 'QUESTION', 'REVEAL', 'GAME_OVER'].includes(this.gameState);
+        this.el.btnHostQuit.style.display = activeSession ? 'block' : 'none';
     }
 
     _showWorldSelect() {
