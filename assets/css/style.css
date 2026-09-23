@@ -126,6 +126,13 @@ html, body {
     max-width: 600px;
 }
 
+#screen-version {
+    font-size: 12px;
+    color: rgba(255,255,255,0.38);
+    letter-spacing: 0.5px;
+    margin: -10px 0 16px;
+}
+
 #btn-start-game {
     padding: 18px 56px;
     font-size: 22px;
