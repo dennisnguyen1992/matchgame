@@ -36,7 +36,7 @@ class Controller {
         this._bindAirConsole();
         this._bindUI();
         const versionEl = document.getElementById('load-version');
-        const version = window.GAME_VERSION || '1.0.2';
+        const version = window.GAME_VERSION || '1.0.4';
         if (versionEl) versionEl.textContent = `Version ${version}`;
         const playVersionEl = document.getElementById('play-version');
         if (playVersionEl) playVersionEl.textContent = `Version ${version}`;
@@ -75,6 +75,7 @@ class Controller {
             worldPrev: document.getElementById('btn-controller-world-prev'),
             worldNext: document.getElementById('btn-controller-world-next'),
             worldStart: document.getElementById('btn-controller-world-start'),
+            worldBack: document.getElementById('btn-controller-world-back'),
             worldWait: document.getElementById('controller-world-wait'),
 
             // Character select
@@ -278,6 +279,9 @@ class Controller {
             window.gameAudio?.unlock();
             this._send({ type: 'launch_game' });
         });
+        this.el.worldBack?.addEventListener('click', () => {
+            this._send({ type: 'back_to_lobby' });
+        });
     }
 
     // ── Screen management ──────────────────────────────────────
@@ -305,8 +309,8 @@ class Controller {
 
     _syncHostControls() {
         if (!this.el.btnHostQuit) return;
-        const activeSession = ['WORLD_SELECT', 'PLAYING', 'QUESTION', 'REVEAL', 'GAME_OVER'].includes(this.gameState);
-        this.el.btnHostQuit.style.display = activeSession ? 'block' : 'none';
+        const showEndGame = this.isHost && this.gameState === 'QUESTION';
+        this.el.btnHostQuit.style.display = showEndGame ? 'block' : 'none';
     }
 
     _showWorldSelect() {
@@ -321,6 +325,7 @@ class Controller {
         if (this.el.worldPrev) this.el.worldPrev.style.display = isHost ? 'block' : 'none';
         if (this.el.worldNext) this.el.worldNext.style.display = isHost ? 'block' : 'none';
         if (this.el.worldStart) this.el.worldStart.style.display = isHost ? 'block' : 'none';
+        if (this.el.worldBack) this.el.worldBack.style.display = isHost ? 'block' : 'none';
         if (this.el.worldWait) this.el.worldWait.style.display = isHost ? 'none' : 'block';
         this._showScreen('worldSelect');
     }

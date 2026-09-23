@@ -115,8 +115,13 @@ class Game {
                     this._launchGame(this.selectedWorldId);
                 }
                 break;
+            case 'back_to_lobby':
+                if (this.state === STATES.WORLD_SELECT && this.mp.isHost(player)) {
+                    this._resetToLobby();
+                }
+                break;
             case 'force_quit':
-                this._resetToLobby(); break;
+                if (this.mp.isHost(player)) this._resetToLobby(); break;
             case 'answer':
                 this._onAnswer(player, data.value, data.timestamp || Date.now()); break;
             case 'request_sync':

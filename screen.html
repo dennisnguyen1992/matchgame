@@ -19,7 +19,7 @@
 
     <p id="lobby-msg">Scan the QR Code with your phone to join the adventure!</p>
 
-    <div id="screen-version">Version 1.0.2</div>
+    <div id="screen-version">Version 1.0.4</div>
 
     <button id="btn-start-game" disabled>🚀 START ADVENTURE!</button>
 </div>
@@ -105,7 +105,7 @@
 <script src="version.js"></script>
 <script>
     const screenVersion = document.getElementById('screen-version');
-    if (screenVersion) screenVersion.textContent = `Version ${window.GAME_VERSION || '1.0.2'}`;
+    if (screenVersion) screenVersion.textContent = `Version ${window.GAME_VERSION || '1.0.4'}`;
 
     // Size canvas to fill the window
     function resizeCanvas() {
